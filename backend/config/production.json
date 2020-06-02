@@ -1,0 +1,5 @@
+{
+  "port": 3005,
+  "requestFromDomain": "http://localhost:3000",
+  "mongoUri": "mongodb+srv://mdbTestUser:1111@cluster0-nitvz.mongodb.net/graphql-lessons?retryWrites=true&w=majority"
+}
