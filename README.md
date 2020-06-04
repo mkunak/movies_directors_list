@@ -2,15 +2,10 @@
 Frontend:
 
     ReactJS
-  
     GraphQL
-  
     Recompose
-  
     Apollo_Client
-  
     Material_UI
-
 
 Backend:
 
