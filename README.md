@@ -4,8 +4,8 @@ Frontend:
     ReactJS
     GraphQL
     Recompose
-    Apollo_Client
-    Material_UI
+    Apollo Client
+    Material UI
 
 Backend:
 
