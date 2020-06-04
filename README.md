@@ -1,9 +1,9 @@
 # movies_directors_list
-1. Frontend:
+Frontend:
 
-    1.1 ReactJS
+    ReactJS
   
-    1.2 GraphQL
+    GraphQL
   
     1.3 Recompose
   
