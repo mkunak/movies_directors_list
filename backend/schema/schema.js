@@ -13,6 +13,7 @@ const {
   GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
+  GraphQLBoolean,
 } = graphql;
 
 // GraphQL schema 1:
@@ -22,10 +23,11 @@ const MovieType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: new GraphQLNonNull(GraphQLString) },
     genre: { type: new GraphQLNonNull(GraphQLString) },
+    rate: { type: GraphQLInt },
+    watched: { type: new GraphQLNonNull(GraphQLBoolean) },
     director: {
       type: DirectorType,
       resolve(parent, args) {
-        // return directors.find(director => director.id === parent.id);
         return Directors.findById(parent.directorId);
       },
     },
@@ -42,7 +44,6 @@ const DirectorType = new GraphQLObjectType({
     movies: {
       type: new GraphQLList(MovieType),
       resolve(parent, args) {
-        // return movies.filter(movie => movie.directorId === parent.id);
         return Movies.find({ directorId: parent.id });
       },
     },
@@ -75,12 +76,16 @@ const Mutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) },
         genre: { type: new GraphQLNonNull(GraphQLString) },
         directorId: { type: GraphQLID },
+        rate: { type: GraphQLInt },
+        watched: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
       resolve(parent, args) {
         const movie = new Movies({
           name: args.name,
           genre: args.genre,
           directorId: args.directorId,
+          rate: args.rate,
+          watched: args.watched,
         });
 
         return movie.save();
@@ -90,18 +95,16 @@ const Mutation = new GraphQLObjectType({
     deleteDirector: {
       type: DirectorType,
       args: { id: { type: GraphQLID } },
-      resolve(parent, args) {
-        return Directors.findByIdAndDelete(args.id);
-        // return director.save();
+      resolve(parent, { id }) {
+        return Directors.findByIdAndDelete(id);
       },
     },
 
     deleteMovie: {
       type: MovieType,
       args: { id: { type: GraphQLID } },
-      resolve(parent, args) {
-        return Movies.findByIdAndDelete(args.id);
-        // return director.save();
+      resolve(parent, { id }) {
+        return Movies.findByIdAndDelete(id);
       },
     },
 
@@ -112,10 +115,9 @@ const Mutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) },
         age: { type: new GraphQLNonNull(GraphQLInt) },
       },
-      resolve(parent, args) {
-        const { name, age } = args;
+      resolve(parent, { id, name, age }) {
         return Directors.findByIdAndUpdate(
-          args.id,
+          id,
           { $set: { name, age } },
           { new: true },
         );
@@ -129,12 +131,13 @@ const Mutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) },
         genre: { type: new GraphQLNonNull(GraphQLString) },
         directorId: { type: GraphQLID },
+        rate: { type: GraphQLInt },
+        watched: { type: new GraphQLNonNull(GraphQLBoolean) },
       },
-      resolve(parent, args) {
-        const { name, genre, directorId } = args;
+      resolve(parent, { id, name, genre, directorId, rate, watched }) {
         return Movies.findByIdAndUpdate(
-          args.id,
-          { $set: { name, genre, directorId } },
+          id,
+          { $set: { name, genre, directorId, rate, watched } },
           { new: true },
         );
       },
@@ -151,33 +154,34 @@ const Query = new GraphQLObjectType({
       type: MovieType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        // return movies.find(movie => movie.id === args.id);
         return Movies.findById(args.id);
       },
     },
+
     // subrequest 'movies':
     movies: {
       type: new GraphQLList(MovieType),
-      resolve(parent, args) {
-        // return movies;
-        return Movies.find({});
+      args: { name: { type: GraphQLString } },
+      resolve(parent, { name }) {
+        return Movies.find({ name: { $regex: name, $options: 'i' } });
       },
     },
+
     // subrequest 'director':
     director: {
       type: DirectorType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        // return directors.find(director => director.id === args.id);
         return Directors.findById(args.id);
       },
     },
+
     // subrequest 'directors':
     directors: {
       type: new GraphQLList(DirectorType),
-      resolve(parent, args) {
-        // return directors;
-        return Directors.find({});
+      args: { name: { type: GraphQLString } },
+      resolve(parent, { name }) {
+        return Directors.find({ name: { $regex: name, $options: 'i' } });
       },
     },
   },
