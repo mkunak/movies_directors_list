@@ -5,15 +5,16 @@ Frontend:
   
     GraphQL
   
-    1.3 Recompose
+    Recompose
   
-    1.4 Apollo_Client
+    Apollo_Client
   
-    1.5 Material_UI
+    Material_UI
 
 
 Backend:
-  2.1 NodeJS
-  2.2 Express
-  2.3 GraphQL
-  2.4 Mongoose
+
+    NodeJS
+    Express
+    GraphQL
+    Mongoose
